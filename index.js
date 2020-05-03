@@ -40,7 +40,7 @@ inquirer
       type: 'list',
       message: 'What do you want to do?',
       name: 'seeEmployee',
-      choices: ['View Departments', 'View Employees', 'View Roles', 'Add Department']
+      choices: ['View Departments', 'View Employees', 'View Roles', 'Add Department', 'Add Employee']
     }
     
     
@@ -66,6 +66,31 @@ inquirer
       ])
       .then( addDepartment )
         
+    } else if (data.seeEmployee === "Add Employee") {
+      inquirer
+      .prompt([
+        {
+          type: 'input',
+          name: 'newEmployeeFirstName',
+          message: 'What is the first name of new employee'
+        },
+        {
+          type: 'input',
+          name: 'newEmployeeLastName',
+          message: 'What is the Last name of new employee'
+        },
+        {
+          type: 'input',
+          name: 'newEmployeeRole',
+          message: 'What is the Role name of new employee'
+        },
+        {
+          type: 'input',
+          name: 'newEmployeeManager',
+          message: 'Who is the Manager of new employee'
+        },
+      ])
+      .then (addEmployee)
     }
   })
 
@@ -150,6 +175,27 @@ async function addDepartment (answer) {
     connection.end()
   }
 }
+
+async function addEmployee (answer1) {
+  try {
+    await connect()
+    await insertEmployee(answer1.newEmployeeFirstName, answer1.newEmployeeLastName, answer1.newEmployeeRole, answer1.newEmployeeManager )
+  } catch (error) {
+    console.error(error)
+  } finally {
+    connection.end()
+  }
+}
+
+// newEmployeeLastName, newEmployeeRole, newEmployeeManager
+
+async function insertEmployee(newEmployeeFirstName, newEmployeeLastName, newEmployeeRole, newEmployeeManager ){
+  console.log('Inserting a new product ...\n')
+  console.log('Selecting all products ...\n')
+  const [rows] = await connection.query(`INSERT INTO employee SET first_name = '${newEmployeeFirstName}', last_name = '${newEmployeeLastName}', role_id = ${newEmployeeRole}, manager_id = ${newEmployeeManager};`)
+  console.table(rows)
+}
+
 
 async function insertDepartment(newDepartment){
   console.log('Inserting a new product ...\n')
