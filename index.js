@@ -40,7 +40,7 @@ inquirer
       type: 'list',
       message: 'What do you want to do?',
       name: 'seeEmployee',
-      choices: ['View Departments', 'View Employees', 'View Roles', 'Add Department', 'Add Employee', 'Add Role']
+      choices: ['View Departments', 'View Employees', 'View Roles', 'Add Department', 'Add Employee', 'Add Role', 'Update Role']
     }
     
     
@@ -111,6 +111,21 @@ inquirer
         },
       ])
       .then (addRole)
+    } else if (data.seeEmployee === 'Update Role') {
+      inquirer
+      .prompt([
+        {
+          type: 'input',
+          name: 'whoToChangeRole',
+          message: 'State ID # of employee whos role you wish to chance?'
+        },
+        {
+          type: 'input',
+          name: 'whatRoleToChange',
+          message: 'what role do you want to set as new role?'
+        }
+      ])
+      .then (updateRole)
     }
   })
 
@@ -241,4 +256,25 @@ async function insertRole(newRoleTitle, newRoleSalary, newRoleDepartmentID){
   console.log('Selecting all products ...\n')
   const [rows] = await connection.query(`INSERT INTO role SET title = '${newRoleTitle}', salary = ${newRoleSalary}, department_id = ${newRoleDepartmentID}`)
   console.table(rows)
+}
+
+
+async function updateRole (x) {
+  try {
+    await connect()
+    await insertUpdateRole(x.whoToChangeRole, x.whatRoleToChange)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    connection.end()
+  }
+}
+
+async function insertUpdateRole (whatRoleToChange, whoToChangeRole) {
+  console.log('Updating all Rocky Road quantities ...\n')
+  const [results] = await connection.query('UPDATE employee SET ? WHERE ?', [
+    { role_id: whatRoleToChange },
+    { id: whoToChangeRole }
+  ])
+  console.table(results)
 }
