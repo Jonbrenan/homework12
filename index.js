@@ -40,7 +40,7 @@ inquirer
       type: 'list',
       message: 'What do you want to do?',
       name: 'seeEmployee',
-      choices: ['View Departments', 'View Employees', 'View Roles', 'Add Department', 'Add Employee']
+      choices: ['View Departments', 'View Employees', 'View Roles', 'Add Department', 'Add Employee', 'Add Role']
     }
     
     
@@ -91,6 +91,26 @@ inquirer
         },
       ])
       .then (addEmployee)
+    } else if (data.seeEmployee === "Add Role") {
+      inquirer
+      .prompt([
+        {
+          type: 'input',
+          name: 'newRoleTitle',
+          message: 'What is the title of your new role?'
+        },
+        {
+          type: 'input',
+          name: 'newRoleSalary',
+          message: 'What is the salary of new role?'
+        },
+        {
+          type: 'input',
+          name: 'newRoleDepartmentID',
+          message: 'what is new roles Department ID?'
+        },
+      ])
+      .then (addRole)
     }
   })
 
@@ -201,5 +221,24 @@ async function insertDepartment(newDepartment){
   console.log('Inserting a new product ...\n')
   console.log('Selecting all products ...\n')
   const [rows] = await connection.query(`INSERT INTO department SET name = '${newDepartment}'`)
+  console.table(rows)
+}
+
+
+async function addRole (x) {
+  try {
+    await connect()
+    await insertRole(x.newRoleTitle, x.newRoleSalary, x.newRoleDepartmentID,)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    connection.end()
+  }
+}
+
+async function insertRole(newRoleTitle, newRoleSalary, newRoleDepartmentID){
+  console.log('Inserting a new product ...\n')
+  console.log('Selecting all products ...\n')
+  const [rows] = await connection.query(`INSERT INTO role SET title = '${newRoleTitle}', salary = ${newRoleSalary}, department_id = ${newRoleDepartmentID}`)
   console.table(rows)
 }
