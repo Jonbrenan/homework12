@@ -1,4 +1,4 @@
-const {prompt} = require('inquirer')
+
 let inquirer = require('inquirer')
 const mysql = require('mysql2/promise')
 
@@ -38,9 +38,9 @@ inquirer
   .prompt([
     {
       type: 'list',
-      message: 'Do you want to see employee',
+      message: 'What do you want to do?',
       name: 'seeEmployee',
-      choices: ['View Departments', 'View Employees', 'View Roles']
+      choices: ['View Departments', 'View Employees', 'View Roles', 'Add Department']
     }
     
     
@@ -54,6 +54,18 @@ inquirer
       viewRoles()
     } else if (data.seeEmployee === "View Employees") {
       viewEmployees()
+    } else if (data.seeEmployee === "Add Department") {
+      inquirer
+      .prompt([
+        {
+          type: 'input',
+          name: 'newDepartment',
+          message: 'What is name of new department'
+        },
+      
+      ])
+      .then( addDepartment )
+        
     }
   })
 
@@ -124,5 +136,24 @@ async function listRoles () {
 async function listEmployees () {
   console.log('Selecting all products ...\n')
   const [rows] = await connection.query('SELECT * from `employee`')
+  console.table(rows)
+}
+
+
+async function addDepartment (answer) {
+  try {
+    await connect()
+    await insertDepartment(answer.newDepartment)
+  } catch (error) {
+    console.error(error)
+  } finally {
+    connection.end()
+  }
+}
+
+async function insertDepartment(newDepartment){
+  console.log('Inserting a new product ...\n')
+  console.log('Selecting all products ...\n')
+  const [rows] = await connection.query(`INSERT INTO department SET name = '${newDepartment}'`)
   console.table(rows)
 }
