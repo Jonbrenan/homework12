@@ -3,9 +3,9 @@ let inquirer = require('inquirer')
 const mysql = require('mysql2/promise')
 
 
-
-
-inquirer
+// this large section of code is the beginning of the program. All questions and answers go here
+async function start() {
+  inquirer
   .prompt([
     {
       type: 'list',
@@ -101,10 +101,22 @@ inquirer
   })
 
 
+}
+
+
+// the start function is called here so the program runs when it is called in Terminal
+start()
+
+
+
 
 let connection
 
 
+
+
+
+// code that views the departments is initialized here
 async function viewDepartments () {
   try {
     await connect()
@@ -116,7 +128,7 @@ async function viewDepartments () {
   }
 }
 
-
+// code that views employees is initialized here
 async function viewEmployees () {
   try {
     await connect()
@@ -129,6 +141,9 @@ async function viewEmployees () {
 }
 
 
+
+
+// code that views roles starts here
 async function viewRoles () {
   try {
     await connect()
@@ -140,6 +155,9 @@ async function viewRoles () {
   }
 }
 
+
+
+// 
 async function connect () {
   connection = await mysql.createConnection({
     host: 'localhost',
@@ -151,26 +169,35 @@ async function connect () {
   console.log('connected as id ' + connection.threadId)
 }
 
+
+
+// actual function that lists departments
 async function listDepartments () {
   console.log('Selecting all products ...\n')
   const [rows] = await connection.query('SELECT * from `department`')
   console.table(rows)
+  start()
 }
 
-
+// actual function that lists roles
 async function listRoles () {
   console.log('Selecting all products ...\n')
   const [rows] = await connection.query('SELECT * from `role`')
   console.table(rows)
+  start()
 }
 
+
+
+// actual functio that lists employees
 async function listEmployees () {
   console.log('Selecting all products ...\n')
   const [rows] = await connection.query('SELECT * from `employee`')
   console.table(rows)
+  start()
 }
 
-
+// code that initializes process for adding department
 async function addDepartment (answer) {
   try {
     await connect()
@@ -182,6 +209,8 @@ async function addDepartment (answer) {
   }
 }
 
+
+// code that initializes process for adding employee
 async function addEmployee (answer1) {
   try {
     await connect()
@@ -193,24 +222,26 @@ async function addEmployee (answer1) {
   }
 }
 
-// newEmployeeLastName, newEmployeeRole, newEmployeeManager
+// function responisble for adding employee
 
 async function insertEmployee(newEmployeeFirstName, newEmployeeLastName, newEmployeeRole, newEmployeeManager ){
   console.log('Inserting a new product ...\n')
   console.log('Selecting all products ...\n')
   const [rows] = await connection.query(`INSERT INTO employee SET first_name = '${newEmployeeFirstName}', last_name = '${newEmployeeLastName}', role_id = ${newEmployeeRole}, manager_id = ${newEmployeeManager};`)
   console.table(rows)
+  start()
 }
 
-
+// function responisble for inserting new departments
 async function insertDepartment(newDepartment){
   console.log('Inserting a new product ...\n')
   console.log('Selecting all products ...\n')
   const [rows] = await connection.query(`INSERT INTO department SET name = '${newDepartment}'`)
   console.table(rows)
+  start()
 }
 
-
+// code that initialzises adding new role
 async function addRole (x) {
   try {
     await connect()
@@ -221,15 +252,17 @@ async function addRole (x) {
     connection.end()
   }
 }
-
+// acutal function that addes new role
 async function insertRole(newRoleTitle, newRoleSalary, newRoleDepartmentID){
   console.log('Inserting a new product ...\n')
   console.log('Selecting all products ...\n')
   const [rows] = await connection.query(`INSERT INTO role SET title = '${newRoleTitle}', salary = ${newRoleSalary}, department_id = ${newRoleDepartmentID}`)
   console.table(rows)
+  start()
 }
 
 
+// code that starts the process for updating roles
 async function updateRole (x) {
   try {
     await connect()
@@ -241,6 +274,8 @@ async function updateRole (x) {
   }
 }
 
+
+// actual function that updates roles
 async function insertUpdateRole (whatRoleToChange, whoToChangeRole) {
   console.log('Updating all Rocky Road quantities ...\n')
   const [results] = await connection.query('UPDATE employee SET ? WHERE ?', [
@@ -248,4 +283,5 @@ async function insertUpdateRole (whatRoleToChange, whoToChangeRole) {
     { id: whoToChangeRole }
   ])
   console.table(results)
+  start()
 }
